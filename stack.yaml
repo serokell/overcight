@@ -1,0 +1,20 @@
+#
+# © 2019 Serokell
+#
+# SPDX-License-Identifier: MPL-2.0
+#
+
+resolver: lts-13.21
+
+packages:
+  - .
+
+extra-deps:
+  - git: https://github.com/nh2/hatrace
+    commit: 766a666f4e6f7eba5e08a7d6bdd2838d54ffe194
+
+  # hatrace deps
+  - git: https://github.com/nh2/linux-ptrace
+    commit: 8969355c2e1ce095ef58acc5f2c5f8a4ea3f1645
+  - git: https://github.com/nh2/posix-waitpid
+    commit: d2d7e06d85965dd022705d3d4e8348940afabb5f

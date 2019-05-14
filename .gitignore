@@ -1,0 +1,6 @@
+overcight.cabal
+
+.stack-work/
+dist/
+dist-newstyle/
+/.ghc.environment.*

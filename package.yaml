@@ -1,0 +1,63 @@
+#
+# © 2019 Serokell
+#
+# SPDX-License-Identifier: MPL-2.0
+#
+
+name: overcight
+version: 0.0.1
+github: serokell/overcight
+category: Development
+
+default-extensions:
+  - BangPatterns
+  - DeriveGeneric
+  - FlexibleContexts
+  - FlexibleInstances
+  - GeneralizedNewtypeDeriving
+  - LambdaCase
+  - MultiParamTypeClasses
+  - NamedFieldPuns
+  - OverloadedStrings
+  - ScopedTypeVariables
+  - StandaloneDeriving
+  - TemplateHaskell
+  - TupleSections
+
+ghc-options:
+  - -Wall
+  - -Wcompat
+  - -Wincomplete-uni-patterns
+  - -Wincomplete-record-updates
+  - -Wpartial-fields
+  - -Wmissing-home-modules
+  - -Widentities
+  - -Wredundant-constraints
+  - -Wcpp-undef
+  - -Wmissing-export-lists
+
+dependencies:
+  - base
+
+
+library:
+  source-dirs: lib
+
+  dependencies:
+    - hatrace
+
+
+executables:
+  overc:
+    source-dirs: app/overc/
+    main: Main.hs
+
+    dependencies:
+      - overcight
+
+  overci:
+    source-dirs: app/overci/
+    main: Main.hs
+
+    dependencies:
+      - overcight
