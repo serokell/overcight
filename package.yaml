@@ -8,6 +8,7 @@ name: overcight
 version: 0.0.1
 github: serokell/overcight
 category: Development
+license: MPL-2.0
 
 default-extensions:
   - BangPatterns
