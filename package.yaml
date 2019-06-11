@@ -62,3 +62,20 @@ executables:
 
     dependencies:
       - overcight
+
+
+tests:
+  test-cli:
+    source-dirs: test/cli/
+    main: Test.hs
+
+    dependencies:
+      - tasty
+      - tasty-discover
+      - tasty-hunit
+
+      - process
+      - safe-exceptions
+      - temporary
+      - text
+      - transformers
