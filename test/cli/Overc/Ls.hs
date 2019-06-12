@@ -1,3 +1,8 @@
+{- © 2019 Serokell
+ -
+ - SPDX-License-Identifier: MPL-2.0
+ -}
+
 module Overc.Ls
   ( unit_runLs
   ) where
