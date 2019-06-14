@@ -12,6 +12,7 @@ module Common
   , writeShellScript
   ) where
 
+import Control.Applicative ((<*))
 import Control.Exception.Safe (bracket)
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.Foldable (traverse_)
@@ -20,6 +21,8 @@ import System.IO.Temp (withSystemTempDirectory)
 
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
+import qualified System.Directory as Dir
+import qualified System.Environment as Env
 import qualified System.IO as IO
 import qualified System.Process as P
 
@@ -32,12 +35,18 @@ data ShellTest m = ShellTest
 
 shellTest :: ShellTest IO -> IO [Text]
 shellTest ShellTest{setup, teardown, run} =
-    bracket setup (\() -> teardown) $ \() ->
-      withSystemTempDirectory "test-overcight" $ \tdir ->
-        (T.lines . T.pack) <$> P.readCreateProcess (P.shell $ cmd tdir) ""
+    withSystemTempDirectory "test-overcight" $ \tdir ->
+    bracket
+     (Dir.getCurrentDirectory <* Dir.setCurrentDirectory tdir)
+     Dir.setCurrentDirectory
+     $ \pwd -> do
+      Env.setEnv "TEST_ROOT" pwd
+      bracket
+        setup
+        (\() -> teardown)
+        (\() -> (T.lines . T.pack) <$> P.readCreateProcess (P.shell cmd) "")
   where
-    cmd tdir =
-      "export TEST_ROOT=$(pwd)/test/cli && cd \"" <> tdir <> "\" && " <> T.unpack run
+    cmd = T.unpack run
 
 
 shell :: MonadIO m => Text -> m ()

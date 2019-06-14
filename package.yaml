@@ -45,20 +45,35 @@ library:
   source-dirs: lib
 
   dependencies:
+    - bytestring
+    - conduit
+    - containers
+    - filepath
+    - fmt
+    - hashable
     - hatrace
+    - microlens
+    - microlens-th
+    - mtl
+    - text
+    - unliftio-core
 
 
 executables:
   overc:
     source-dirs: app/overc/
     main: Main.hs
+    ghc-options: [-threaded]
 
     dependencies:
+      - fmt
       - overcight
+      - text
 
   overci:
     source-dirs: app/overci/
     main: Main.hs
+    ghc-options: [-threaded]
 
     dependencies:
       - overcight
@@ -74,6 +89,7 @@ tests:
       - tasty-discover
       - tasty-hunit
 
+      - directory
       - process
       - safe-exceptions
       - temporary

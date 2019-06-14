@@ -25,7 +25,7 @@ unit_simple = do
         , "touch a/a2"
         , "touch a/b/b1"
         , "touch a/b/b2"
-        , "overc run -- $TEST_ROOT/Overc/basic/simple.sh"
+        , "overc run -- $TEST_ROOT/test/cli/Overc/basic/simple.sh"
         ]
     , teardown = shells
         [ "rm -rf a"
@@ -51,7 +51,7 @@ unit_exec = do
           ]
         writeShellScript "a/execme" "cat a/readme"
         shells
-          [ "overc run -- $TEST_ROOT/Overc/basic/exec.sh"
+          [ "overc run -- $TEST_ROOT/test/cli/Overc/basic/exec.sh"
           ]
     , teardown = shells
         [ "rm -rf a"
