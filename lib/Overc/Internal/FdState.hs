@@ -31,6 +31,12 @@ import qualified Data.Map as Map
 import qualified System.Hatrace as HT
 
 
+-- TODO: include some header
+
+const_AT_FDCWD :: Integral n => n
+const_AT_FDCWD = -100
+
+
 -- TODO: This approach is questionable as files can be moved around and thus
 -- their names can change.
 
@@ -59,7 +65,11 @@ updateFdState = CL.iterM $ \(pid, detail) -> case detail of
       fd = HT.fd (det :: HT.SyscallExitDetails_openat)
       dirfd = HT.dirfd (HT.enterDetail (det :: HT.SyscallExitDetails_openat) :: HT.SyscallEnterDetails_openat)
       fp = HT.pathnameBS (HT.enterDetail (det :: HT.SyscallExitDetails_openat) :: HT.SyscallEnterDetails_openat)
-    in gets (Map.lookup (pid, dirfd)) >>= \case
+    in
+      if dirfd == const_AT_FDCWD
+      -- TODO: Resolve relative file path
+      then modify $ Map.insert (pid, fd) fp
+      else gets (Map.lookup (pid, dirfd)) >>= \case
         Nothing -> error "updateFdState: failed tracking dirfd for openat"
         Just dirp -> modify $ Map.insert (pid, fd) (dirp <> "/" <> fp)
   HT.DetailedSyscallExit_close det ->
