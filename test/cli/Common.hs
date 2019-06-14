@@ -24,6 +24,7 @@ import qualified Data.Text.IO as T
 import qualified System.Directory as Dir
 import qualified System.Environment as Env
 import qualified System.IO as IO
+import qualified System.Posix.Files as Posix
 import qualified System.Process as P
 
 
@@ -56,8 +57,9 @@ shells :: MonadIO m => [Text] -> m ()
 shells = traverse_ shell
 
 writeShellScript :: MonadIO m => FilePath -> Text -> m ()
-writeShellScript fp t =
+writeShellScript fp t = do
   liftIO $ IO.withFile fp IO.WriteMode $ \h -> do
     T.hPutStrLn h "#!/usr/bin/env bash"
     T.hPutStrLn h ""
     T.hPutStrLn h t
+  liftIO $ Posix.setFileMode fp Posix.ownerExecuteMode

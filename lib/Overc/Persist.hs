@@ -7,8 +7,8 @@ module Overc.Persist
   ( toFileName
   ) where
 
-import System.FilePath ((</>), takeBaseName)
+import System.FilePath (takeBaseName)
 
 
 toFileName :: String -> String
-toFileName name = "overc-" </> takeBaseName name </> ".json"
+toFileName name = "overc-" <> takeBaseName name <> ".json"

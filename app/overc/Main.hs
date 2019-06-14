@@ -17,13 +17,13 @@ import Overc.Persist (toFileName)
 
 main :: IO ()
 main = do
-  cmd : "--" : rest <- getArgs
+  cmd : rest <- getArgs
   case cmd of
     "run" -> do
-      let name : args = rest
+      let "--" : name : args = rest
       let fname = toFileName name
       (_code, cights) <- overc name args
       T.writeFile fname $ pretty cights
-    "view" -> do
-      let fname : [] = rest
+    "set" -> do
+      let "view" : fname : [] = rest
       T.readFile fname >>= T.putStr

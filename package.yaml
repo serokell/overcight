@@ -95,3 +95,4 @@ tests:
       - temporary
       - text
       - transformers
+      - unix
