@@ -18,7 +18,7 @@ module Overc.Internal.FdState
   , Map.lookup
   ) where
 
-import Control.Monad.State (MonadState, modify)
+import Control.Monad.State (MonadState, gets, modify)
 import Data.ByteString (ByteString)
 import Data.Conduit (ConduitT)
 import Data.Map (Map)
@@ -41,6 +41,8 @@ type FdState = Map (CPid, CInt) ByteString
 empty :: FdState
 empty = Map.empty
 
+-- TODO: track fd inheritance
+
 -- | A conduit that updates the @FdState@ map on @open@ and @close@ calls.
 updateFdState ::
      MonadState FdState m
@@ -52,8 +54,14 @@ updateFdState = CL.iterM $ \(pid, detail) -> case detail of
       fd = HT.fd (det :: HT.SyscallExitDetails_open)
       fp = HT.pathnameBS (HT.enterDetail (det :: HT.SyscallExitDetails_open) :: HT.SyscallEnterDetails_open)
     in modify $ Map.insert (pid, fd) fp
-  -- TODO: Handle DetailedSyscallExit_openat
-  HT.DetailedSyscallExit_openat _ -> error "updateFdState: unhandled openat"
+  HT.DetailedSyscallExit_openat det ->
+    let
+      fd = HT.fd (det :: HT.SyscallExitDetails_openat)
+      dirfd = HT.dirfd (HT.enterDetail (det :: HT.SyscallExitDetails_openat) :: HT.SyscallEnterDetails_openat)
+      fp = HT.pathnameBS (HT.enterDetail (det :: HT.SyscallExitDetails_openat) :: HT.SyscallEnterDetails_openat)
+    in gets (Map.lookup (pid, dirfd)) >>= \case
+        Nothing -> error "updateFdState: failed tracking dirfd for openat"
+        Just dirp -> modify $ Map.insert (pid, fd) (dirp <> "/" <> fp)
   HT.DetailedSyscallExit_close det ->
     let
       fd = HT.fd (HT.enterDetail (det :: HT.SyscallExitDetails_close) :: HT.SyscallEnterDetails_close)
