@@ -43,7 +43,13 @@ asCight (pid, DetailedSyscallExit_write det) = do
     Nothing -> pure Nothing
     Just fp -> pure (Just $ CightRead $ mkCightPath fp)
 -- TODO: execve should be processed on enter
--- asCight (pid, DetailedSyscallExit_execve det) = _
+asCight (pid, DetailedSyscallExit_execve det) = pure $
+  case HT.optionalEnterDetail (det :: HT.SyscallExitDetails_execve) of
+    Nothing -> Nothing
+    Just edet ->
+      let fp = HT.filenameBS (edet :: HT.SyscallEnterDetails_execve)
+      in Just $ CightExec $ mkCightPath fp
+-- TODO: execveat
 asCight _ = pure Nothing
 
 filterSuccess ::
